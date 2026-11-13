@@ -1,0 +1,2312 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JAMPI SD — JAringan Media Pembelajaran Interaktif Sekolah Dasar</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka (Ramah Anak SD) & Plus Jakarta Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Fredoka"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f0f9ff;
+      background-image: 
+        radial-gradient(at 10% 10%, rgba(56, 189, 248, 0.22) 0px, transparent 50%),
+        radial-gradient(at 90% 15%, rgba(250, 204, 21, 0.25) 0px, transparent 50%),
+        radial-gradient(at 50% 90%, rgba(52, 211, 153, 0.2) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: #1e293b;
+      overflow-x: hidden;
+    }
+    .sunny-panel {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 2px solid #e0f2fe;
+      box-shadow: 0 12px 30px -8px rgba(14, 165, 233, 0.12);
+    }
+    .kid-card {
+      background: #ffffff;
+      border: 3px solid #e2e8f0;
+      box-shadow: 0 8px 0 #cbd5e1;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .kid-card:hover {
+      transform: translateY(-6px);
+      border-color: #38bdf8;
+      box-shadow: 0 12px 0 #7dd3fc, 0 20px 25px -5px rgba(14, 165, 233, 0.18);
+    }
+    .btn-bouncy {
+      transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .btn-bouncy:hover {
+      transform: translateY(-2px) scale(1.02);
+    }
+    .btn-bouncy:active {
+      transform: translateY(2px);
+    }
+    /* Custom Scrollbar Cerah */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e0f2fe;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #38bdf8;
+      border-radius: 9999px;
+      border: 2px solid #e0f2fe;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0284c7;
+    }
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatSlow 3.2s infinite ease-in-out;
+    }
+    @keyframes eqBar {
+      0%, 100% { height: 20%; }
+      50% { height: 95%; }
+    }
+    .eq-bar {
+      animation: eqBar 1s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-amber-300 selection:text-slate-900">
+
+  <!-- TOP NOTIFICATION TOAST -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-w-md w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- HEADER / NAVBAR CERAH -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-4 border-sky-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-500 flex items-center justify-center shadow-md shadow-sky-400/30 border-2 border-sky-200 shrink-0 animate-float">
+          <span class="text-2xl">🎒</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-bold text-2xl sm:text-3xl tracking-tight bg-gradient-to-r from-sky-600 via-indigo-600 to-emerald-500 bg-clip-text text-transparent">JAMPI SD</span>
+            <span class="hidden sm:inline-flex items-center px-3 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border-2 border-amber-300">
+              🌟 Edisi Anak Hebat
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-600 font-semibold leading-tight">JAringan Media Pembelajaran Interaktif Sekolah Dasar</p>
+        </div>
+      </div>
+
+      <!-- Right Action: Admin Login / Status -->
+      <div class="flex items-center gap-2.5">
+        <!-- Cloud Status Indicator -->
+        <div id="cloudStatusBadge" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-extrabold bg-sky-50 text-sky-700 border-2 border-sky-200">
+          <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span id="cloudStatusText">Menghubungkan Cloud...</span>
+        </div>
+
+        <!-- Public State Button -->
+        <button id="btnLoginAdmin" onclick="openLoginModal()" class="btn-bouncy inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-sky-100 hover:bg-sky-500 text-sky-800 hover:text-white border-2 border-sky-300 transition-all shadow-sm cursor-pointer">
+          <span>🔒 Login Guru / Admin</span>
+        </button>
+
+        <!-- Logged-In Admin State Badge & Logout -->
+        <div id="adminHeaderControls" class="hidden items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-800 border-2 border-emerald-300">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+            👨‍🏫 Mode Guru Aktif
+          </span>
+          <button onclick="logoutAdmin()" class="btn-bouncy inline-flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-bold bg-rose-100 hover:bg-rose-500 text-rose-700 hover:text-white border-2 border-rose-300 transition-all cursor-pointer">
+            <i class="fa-solid fa-power-off"></i>
+            <span>Keluar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
+
+    <!-- HERO SECTION CERIA & REAL-TIME STATISTICS -->
+    <section class="relative rounded-3xl bg-gradient-to-br from-sky-500 via-blue-500 to-indigo-600 p-6 sm:p-8 lg:p-10 overflow-hidden border-4 border-sky-300 shadow-xl text-white">
+      <!-- Decorative Shapes -->
+      <div class="absolute -right-10 -top-10 w-56 h-56 bg-amber-300/30 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute right-8 bottom-4 text-7xl opacity-20 pointer-events-none hidden lg:block select-none">🚀🎨📚</div>
+
+      <div class="relative z-10 max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-300 text-slate-900 text-xs sm:text-sm font-extrabold mb-4 shadow-md">
+          <span>✨ Belajar Sambil Bermain untuk Siswa Sekolah Dasar!</span>
+        </div>
+        <h1 class="font-display text-2xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight drop-shadow-sm">
+          Pusat Eksplorasi Media Pembelajaran <span class="text-amber-300 underline decoration-wavy decoration-amber-300/70">Interaktif & Seru!</span>
+        </h1>
+        <p class="mt-3 text-sky-50 text-sm sm:text-base font-medium leading-relaxed">
+          Ayo pilih permainan edukasi, simulasi sains, video cerita, dan lagu pembelajaran favoritmu! Semua bisa langsung dimainkan di HP maupun laptop.
+        </p>
+      </div>
+
+      <!-- 5 Real-Time Stat Cards Cerah -->
+      <div class="relative z-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mt-7">
+        <div class="bg-white/95 backdrop-blur rounded-2xl p-4 flex items-center gap-3.5 border-b-4 border-indigo-400 shadow-md text-slate-800">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl shrink-0">
+            🌟
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-bold">Total Media</p>
+            <p id="statTotal" class="text-2xl font-display font-bold text-indigo-700">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white/95 backdrop-blur rounded-2xl p-4 flex items-center gap-3.5 border-b-4 border-emerald-400 shadow-md text-slate-800">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shrink-0">
+            🎮
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-bold">Game / MPI</p>
+            <p id="statMpi" class="text-2xl font-display font-bold text-emerald-600">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white/95 backdrop-blur rounded-2xl p-4 flex items-center gap-3.5 border-b-4 border-sky-400 shadow-md text-slate-800">
+          <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl shrink-0">
+            🔗
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-bold">Simulasi Web</p>
+            <p id="statEmbed" class="text-2xl font-display font-bold text-sky-600">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white/95 backdrop-blur rounded-2xl p-4 flex items-center gap-3.5 border-b-4 border-rose-400 shadow-md text-slate-800">
+          <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-2xl shrink-0">
+            ▶
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-bold">Video Seru</p>
+            <p id="statYoutube" class="text-2xl font-display font-bold text-rose-600">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white/95 backdrop-blur rounded-2xl p-4 flex items-center gap-3.5 border-b-4 border-amber-400 shadow-md text-slate-800 col-span-2 sm:col-span-1">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl shrink-0">
+            🎵
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-bold">Audio & Lagu</p>
+            <p id="statAudio" class="text-2xl font-display font-bold text-amber-600">0</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN PANEL SECTION (HIDDEN UNLESS ADMIN LOGGED IN) -->
+    <section id="adminPanelSection" class="hidden space-y-6">
+      
+      <!-- GOOGLE SPREADSHEETS & APPS SCRIPT SYNC PANEL -->
+      <div class="rounded-3xl bg-gradient-to-r from-emerald-100 via-teal-50 to-sky-100 p-6 sm:p-7 border-4 border-emerald-400 shadow-lg relative overflow-hidden space-y-5">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-2 max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider">
+              <i class="fa-solid fa-table"></i> Database Google Spreadsheet & Apps Script
+            </div>
+            <h2 class="text-lg sm:text-2xl font-display font-bold text-slate-900">
+              📊 Pusat Koneksi Google Spreadsheet Sekolah (Real-Time)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
+              Seluruh media pembelajaran otomatis tersimpan di <strong>Google Spreadsheet</strong> milik sekolah Bapak/Ibu! Jika spreadsheet terlalu penuh (kode game HTML panjang), skrip otomatis memecahnya ke beberapa kolom agar tidak pernah gagal.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+            <button type="button" onclick="toggleCloudSetupBox()" class="btn-bouncy inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-extrabold text-xs sm:text-sm bg-sky-600 hover:bg-sky-700 text-white shadow-md cursor-pointer">
+              <i class="fa-solid fa-code"></i>
+              <span>⚙️ Setup Google Spreadsheet & Script</span>
+            </button>
+            <button type="button" onclick="copyEmbedCodeWithCloud()" class="btn-bouncy inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-extrabold text-xs sm:text-sm bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer" title="Salin kode HTML sekali saja untuk Google Sites">
+              <i class="fa-solid fa-copy"></i>
+              <span>📋 Salin Kode Embed Google Sites (1x Saja)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PENGATURAN GOOGLE APPS SCRIPT & SPREADSHEET -->
+        <div id="cloudSetupBox" class="hidden bg-white/95 rounded-2xl p-5 border-2 border-emerald-300 space-y-5">
+          
+          <!-- LANGKAH 1: SALIN KODE GOOGLE APPS SCRIPT (CODE.GS) -->
+          <div class="bg-gradient-to-r from-emerald-50 to-sky-50 border-2 border-emerald-400 rounded-2xl p-4 sm:p-5 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-extrabold">
+                📋 LANGKAH 1: Pasang Kode di Google Spreadsheet Anda
+              </span>
+              <button type="button" onclick="copyAppsScriptCode()" class="btn-bouncy inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow cursor-pointer">
+                <i class="fa-solid fa-copy"></i> Salin Kode Google Apps Script (Code.gs)
+              </button>
+            </div>
+
+            <ol class="list-decimal list-inside text-xs sm:text-sm text-slate-700 font-medium space-y-1.5 leading-relaxed">
+              <li>Buka <a href="https://sheets.new" target="_blank" class="text-emerald-700 font-extrabold underline">Google Spreadsheet Baru (sheets.new)</a> menggunakan akun Google Bapak/Ibu.</li>
+              <li>Di menu atas Spreadsheet, klik <strong>Ekstensi (Extensions)</strong> &rarr; pilih <strong>Apps Script</strong>.</li>
+              <li>Hapus semua kode yang ada di dalam editor, lalu klik tombol hijau <strong>"Salin Kode Google Apps Script (Code.gs)"</strong> di atas dan tempelkan (Paste) ke editor Apps Script, lalu tekan ikon 💾 <strong>Simpan</strong>.</li>
+              <li>Klik tombol biru <strong>Terapkan (Deploy)</strong> di kanan atas &rarr; pilih <strong>Deployment baru (New deployment)</strong>.</li>
+              <li>Klik ikon roda gigi ⚙️ di sebelah "Pilih jenis" &rarr; pilih <strong>Aplikasi Web (Web app)</strong>:
+                <ul class="list-disc list-inside ml-5 mt-1 text-xs text-slate-600 font-bold">
+                  <li>Jalankan sebagai (Execute as): <strong>Saya (Me)</strong></li>
+                  <li>Siapa yang memiliki akses (Who has access): <strong>Siapa saja (Anyone)</strong> &larr; <em>Wajib dipilih agar siswa bisa melihat materi!</em></li>
+                </ul>
+              </li>
+              <li>Klik <strong>Terapkan (Deploy)</strong>, berikan izin akses (Authorize access &rarr; Advanced &rarr; Go to project), lalu salin <strong>URL Aplikasi Web (berakhiran <code class="bg-white px-1 rounded border">/exec</code>)</strong>.</li>
+            </ol>
+
+            <details class="bg-slate-900 text-emerald-300 rounded-xl p-3 text-xs font-mono">
+              <summary class="cursor-pointer font-sans font-extrabold text-white select-none">👀 Lihat Isi Kode Google Apps Script (Code.gs)</summary>
+              <pre id="appsScriptSourcePre" class="mt-3 overflow-x-auto text-[11px] leading-relaxed text-emerald-200 select-all"></pre>
+            </details>
+          </div>
+
+          <!-- LANGKAH 2: TEMPEL URL WEB APP (/EXEC) -->
+          <div class="border-t-2 border-slate-100 pt-4 space-y-3">
+            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+              🔗 LANGKAH 2: Tempel URL Web App Google Apps Script (<code class="text-emerald-700">https://script.google.com/macros/s/.../exec</code>)
+            </label>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
+              <div class="lg:col-span-8">
+                <input type="url" id="inputCustomCloudUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full px-4 py-3 rounded-xl bg-sky-50 border-2 border-sky-300 text-slate-800 text-xs sm:text-sm font-bold focus:outline-none focus:border-sky-600" />
+              </div>
+              <div class="lg:col-span-4 flex gap-2">
+                <button type="button" onclick="saveCustomCloudUrl()" class="btn-bouncy flex-1 py-3 px-4 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-extrabold shadow cursor-pointer">
+                  🔌 Hubungkan Spreadsheet Sekarang
+                </button>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 font-semibold">
+              💡 <strong>Langkah Terakhir:</strong> Setelah status berubah menjadi <strong>"📊 Spreadsheet Terhubung"</strong>, klik tombol <strong>📋 Salin Kode Embed Google Sites (1x Saja)</strong> lalu tempelkan ke Google Sites Anda!
+            </p>
+          </div>
+
+          <!-- OPSIONAL: FALLBACK CLOUD INSTAN 1-KLIK -->
+          <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="text-xs text-slate-700">
+              <span class="font-extrabold text-amber-900">⚡ Belum sempat buat Google Spreadsheet?</span>
+              <p class="font-medium mt-0.5">Bapak/Ibu juga tetap bisa mengaktifkan Cloud Instan 1-Klik hanya dengan mengetik nama sekolah:</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <input type="text" id="inputSchoolRoomCode" placeholder="Kode sekolah (mis: sdn1merdeka)" class="px-3 py-2 rounded-xl bg-white border-2 border-amber-300 text-xs font-bold w-44" />
+              <button type="button" onclick="generateInstantCloudRoom()" class="btn-bouncy px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold cursor-pointer">
+                ⚡ Cloud Instan
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FORM TAMBAH / EDIT MEDIA PEMBELAJARAN BARU -->
+      <div class="sunny-panel rounded-3xl p-6 sm:p-8 border-4 border-sky-200 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b-2 border-sky-100">
+          <div>
+            <h3 id="adminFormHeading" class="text-xl sm:text-2xl font-display font-bold text-slate-800 flex items-center gap-2.5">
+              <span class="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 inline-flex items-center justify-center text-base border border-sky-300">
+                <i class="fa-solid fa-plus"></i>
+              </span>
+              <span>— Tambah Media Pembelajaran SD Baru</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Pilih salah satu dari 4 jenis media pembelajaran interaktif di bawah ini.</p>
+          </div>
+          <button id="btnCancelEdit" onclick="resetAdminForm()" class="hidden self-start sm:self-auto px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold cursor-pointer">
+            ✕ Batalkan Mode Edit
+          </button>
+        </div>
+
+        <!-- 4 TABS PILIHAN JENIS MEDIA -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 my-6">
+          <button type="button" onclick="switchMediaTypeTab('mpi_html')" id="tabBtn_mpi_html" class="tab-type-btn flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl font-bold text-xs sm:text-sm border-2 transition-all cursor-pointer">
+            <span>🎮 MPI Interaktif (.html)</span>
+          </button>
+          <button type="button" onclick="switchMediaTypeTab('embed')" id="tabBtn_embed" class="tab-type-btn flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl font-bold text-xs sm:text-sm border-2 transition-all cursor-pointer">
+            <span>🔗 Embed Code / URL Web</span>
+          </button>
+          <button type="button" onclick="switchMediaTypeTab('youtube')" id="tabBtn_youtube" class="tab-type-btn flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl font-bold text-xs sm:text-sm border-2 transition-all cursor-pointer">
+            <span>▶ Video YouTube</span>
+          </button>
+          <button type="button" onclick="switchMediaTypeTab('audio')" id="tabBtn_audio" class="tab-type-btn flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl font-bold text-xs sm:text-sm border-2 transition-all cursor-pointer">
+            <span>🎵 Media Audio</span>
+          </button>
+        </div>
+
+        <!-- FORM INPUTS -->
+        <form id="mediaForm" onsubmit="handleSaveMedia(event)" class="space-y-5">
+          <input type="hidden" id="editMediaId" value="" />
+          <input type="hidden" id="activeMediaType" value="mpi_html" />
+
+          <!-- Common Metadata Fields -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2">Judul Media Pembelajaran *</label>
+              <input type="text" id="inputJudul" required placeholder="Contoh: Petualangan Berhitung Perkalian Seru" class="w-full px-4 py-3 rounded-2xl bg-sky-50/70 border-2 border-sky-200 text-slate-800 text-sm font-semibold focus:outline-none focus:border-sky-500 focus:bg-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2">Nama Guru / Pembuat *</label>
+              <input type="text" id="inputPembuat" required placeholder="Contoh: Ibu Siti Aminah, S.Pd." class="w-full px-4 py-3 rounded-2xl bg-sky-50/70 border-2 border-sky-200 text-slate-800 text-sm font-semibold focus:outline-none focus:border-sky-500 focus:bg-white" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2">Kategori Mata Pelajaran SD *</label>
+              <select id="inputKategori" class="w-full px-4 py-3 rounded-2xl bg-sky-50/70 border-2 border-sky-200 text-slate-800 text-sm font-semibold focus:outline-none focus:border-sky-500 focus:bg-white">
+                <option value="IPAS & Sains">🔬 IPAS & Sains</option>
+                <option value="Matematika">📐 Matematika</option>
+                <option value="Koding & Logika">💻 Koding & Logika</option>
+                <option value="Bahasa & Literasi">📚 Bahasa & Literasi</option>
+                <option value="Seni & Olahraga">🎨 Seni & Olahraga</option>
+                <option value="Permainan Tradisional">🪁 Permainan Tradisional</option>
+                <option value="Lainnya">✨ Lainnya (Pancasila / Agama)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2">Tingkat Kelas SD *</label>
+              <select id="inputJenjang" class="w-full px-4 py-3 rounded-2xl bg-sky-50/70 border-2 border-sky-200 text-slate-800 text-sm font-semibold focus:outline-none focus:border-sky-500 focus:bg-white">
+                <option value="Kelas 1 - 2 SD">🐣 Kelas 1 - 2 SD (Fase A)</option>
+                <option value="Kelas 3 - 4 SD" selected>🚀 Kelas 3 - 4 SD (Fase B)</option>
+                <option value="Kelas 5 - 6 SD">🌟 Kelas 5 - 6 SD (Fase C)</option>
+                <option value="Semua Kelas SD">🎒 Semua Kelas SD (Kelas 1 - 6)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2">Deskripsi Singkat & Petunjuk Bermain *</label>
+            <textarea id="inputDeskripsi" rows="2" required placeholder="Tuliskan ajakan bermain atau petunjuk singkat yang mudah dipahami anak SD..." class="w-full px-4 py-3 rounded-2xl bg-sky-50/70 border-2 border-sky-200 text-slate-800 text-sm font-semibold focus:outline-none focus:border-sky-500 focus:bg-white"></textarea>
+          </div>
+
+          <!-- DYNAMIC CONTENT INPUT BASED ON SELECTED TAB -->
+          
+          <!-- TAB 1: MPI HTML (.html file upload or paste code) -->
+          <div id="panel_mpi_html" class="space-y-4 p-5 rounded-2xl bg-emerald-50 border-2 border-emerald-300">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <label class="text-sm font-extrabold text-emerald-800 flex items-center gap-2">
+                <i class="fa-solid fa-file-code text-emerald-600"></i> Unggah File Game / Media HTML (.html)
+              </label>
+              <span class="text-xs font-semibold text-emerald-700">Mendukung game dari Gemini Canvas, ChatGPT, Scratch HTML, Construct, dll.</span>
+            </div>
+
+            <!-- Drag & Drop Zone -->
+            <div id="htmlDropZone" class="border-3 border-dashed border-emerald-400 hover:border-emerald-600 rounded-2xl p-6 text-center transition-all bg-white cursor-pointer" onclick="document.getElementById('fileInputHtml').click()">
+              <input type="file" id="fileInputHtml" accept=".html,.htm" class="hidden" onchange="handleHtmlFileSelect(event)" />
+              <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3 text-2xl">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <p class="text-sm font-extrabold text-slate-800">Klik untuk memilih file <span class="text-emerald-600 underline">.html</span> atau seret & lepas file ke sini</p>
+              <p id="htmlFileStatus" class="text-xs font-medium text-slate-500 mt-1">Belum ada file dipilih (Bisa juga tempel kode HTML langsung di bawah)</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Isi Kode HTML (Otomatis terisi dari file atau tempel manual):</label>
+              <textarea id="inputHtmlContent" rows="5" placeholder="<!DOCTYPE html><html>...</html>" class="w-full px-4 py-3 rounded-xl bg-white border-2 border-emerald-200 text-slate-800 font-mono text-xs focus:outline-none focus:border-emerald-500"></textarea>
+            </div>
+          </div>
+
+          <!-- TAB 2: EMBED CODE / URL WEB -->
+          <div id="panel_embed" class="hidden space-y-3 p-5 rounded-2xl bg-sky-50 border-2 border-sky-300">
+            <label class="block text-sm font-extrabold text-sky-800">
+              🔗 Tempelkan Kode <code class="bg-white px-1.5 py-0.5 rounded border border-sky-200">&lt;iframe ...&gt;</code> atau Link URL Publik
+            </label>
+            <p class="text-xs font-medium text-slate-600">Mendukung Canva, Wordwall, Genially, PhET Simulation, Quizizz, atau link web interaktif.</p>
+            <textarea id="inputEmbedContent" rows="3" placeholder="Contoh: <iframe src='https://wordwall.net/embed/...' ...></iframe> atau https://phet.colorado.edu/sims/html/..." class="w-full px-4 py-3 rounded-xl bg-white border-2 border-sky-200 text-slate-800 font-mono text-xs focus:outline-none focus:border-sky-500"></textarea>
+          </div>
+
+          <!-- TAB 3: YOUTUBE VIDEO -->
+          <div id="panel_youtube" class="hidden space-y-4 p-5 rounded-2xl bg-rose-50 border-2 border-rose-300">
+            <div>
+              <label class="block text-sm font-extrabold text-rose-800 mb-1">
+                ▶ Link Video YouTube Edukasi Anak
+              </label>
+              <p class="text-xs font-medium text-slate-600 mb-3">Mendukung format <code class="text-rose-700 font-bold">youtube.com/watch?v=...</code>, <code class="text-rose-700 font-bold">youtu.be/...</code>, atau <code class="text-rose-700 font-bold">youtube.com/shorts/...</code></p>
+              <input type="text" id="inputYoutubeUrl" oninput="previewYoutubeInput(this.value)" placeholder="https://www.youtube.com/watch?v=..." class="w-full px-4 py-3 rounded-xl bg-white border-2 border-rose-200 text-slate-800 text-sm font-semibold focus:outline-none focus:border-rose-500" />
+            </div>
+            <!-- Live Thumbnail Preview -->
+            <div id="youtubePreviewBox" class="hidden items-center gap-4 p-3 rounded-xl bg-white border-2 border-rose-200">
+              <img id="youtubePreviewThumb" src="" alt="Preview Thumbnail" class="w-32 h-20 object-cover rounded-lg border border-slate-200 shrink-0" />
+              <div class="text-xs space-y-1">
+                <span class="inline-flex items-center gap-1 text-emerald-600 font-extrabold"><i class="fa-solid fa-circle-check"></i> Video Berhasil Ditemukan!</span>
+                <p id="youtubeDetectedId" class="text-slate-600 font-mono font-bold"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: MEDIA AUDIO -->
+          <div id="panel_audio" class="hidden space-y-4 p-5 rounded-2xl bg-amber-50 border-2 border-amber-300">
+            <label class="block text-sm font-extrabold text-amber-900">
+              🎵 Unggah File Audio (.mp3 / .wav) ATAU Tempel Link Audio
+            </label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl bg-white border-2 border-amber-200 flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-extrabold uppercase text-amber-700">Opsi 1: Unggah File Audio Lokal</span>
+                  <p class="text-xs text-slate-600 mt-1">Lagu anak atau dongeng suara akan disimpan langsung di dalam kode HTML.</p>
+                </div>
+                <input type="file" id="fileInputAudio" accept=".mp3,.wav,.ogg,audio/*" onchange="handleAudioFileSelect(event)" class="mt-3 block w-full text-xs text-slate-700 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-amber-400 file:text-slate-900 hover:file:bg-amber-300 cursor-pointer" />
+                <p id="audioFileStatus" class="text-xs font-bold text-emerald-600 mt-2 hidden"></p>
+              </div>
+
+              <div class="p-4 rounded-xl bg-white border-2 border-amber-200 flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-extrabold uppercase text-amber-700">Opsi 2: Link Audio MP3 / URL</span>
+                  <p class="text-xs text-slate-600 mt-1">Tempel link file .mp3 publik atau hasil konversi Data URL.</p>
+                </div>
+                <input type="text" id="inputAudioUrl" placeholder="https://.../lagu-anak.mp3" class="mt-3 w-full px-3.5 py-2.5 rounded-xl bg-amber-50/50 border-2 border-amber-200 text-slate-800 text-xs font-semibold focus:outline-none focus:border-amber-500" />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <button type="submit" id="btnSubmitMedia" class="btn-bouncy inline-flex items-center gap-2 px-7 py-4 rounded-2xl font-extrabold text-sm bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-600 hover:to-emerald-600 text-white shadow-lg shadow-sky-500/30 transition-all cursor-pointer">
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span id="btnSubmitText">Simpan & Tambahkan ke Galeri SD</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- FILTER & SEARCH BAR CERAH RAMAH ANAK -->
+    <section class="sunny-panel rounded-3xl p-5 sm:p-6 space-y-5">
+      <!-- Top Row: Search + Dropdowns -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5">
+        <!-- Search Input -->
+        <div class="md:col-span-6 relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-sky-500 text-base"></i>
+          <input type="text" id="searchInput" oninput="renderGallery()" placeholder="🔍 Cari nama permainan, pelajaran, atau nama Bapak/Ibu Guru..." class="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-sky-50/90 border-2 border-sky-200 text-sm font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:bg-white transition-all" />
+        </div>
+
+        <!-- Category Filter -->
+        <div class="md:col-span-3">
+          <select id="filterKategori" onchange="renderGallery()" class="w-full px-4 py-3.5 rounded-2xl bg-sky-50/90 border-2 border-sky-200 text-sm font-bold text-slate-700 focus:outline-none focus:border-sky-500 focus:bg-white cursor-pointer">
+            <option value="Semua">📚 Semua Pelajaran</option>
+            <option value="IPAS & Sains">🔬 IPAS & Sains</option>
+            <option value="Matematika">📐 Matematika</option>
+            <option value="Koding & Logika">💻 Koding & Logika</option>
+            <option value="Bahasa & Literasi">📚 Bahasa & Literasi</option>
+            <option value="Seni & Olahraga">🎨 Seni & Olahraga</option>
+            <option value="Permainan Tradisional">🪁 Permainan Tradisional</option>
+            <option value="Lainnya">✨ Lainnya</option>
+          </select>
+        </div>
+
+        <!-- Kelas SD Filter -->
+        <div class="md:col-span-3">
+          <select id="filterJenjang" onchange="renderGallery()" class="w-full px-4 py-3.5 rounded-2xl bg-amber-50/90 border-2 border-amber-300 text-sm font-bold text-slate-800 focus:outline-none focus:border-amber-500 focus:bg-white cursor-pointer">
+            <option value="Semua">🎒 Semua Kelas SD (1-6)</option>
+            <option value="Kelas 1 - 2 SD">🐣 Kelas 1 - 2 SD</option>
+            <option value="Kelas 3 - 4 SD">🚀 Kelas 3 - 4 SD</option>
+            <option value="Kelas 5 - 6 SD">🌟 Kelas 5 - 6 SD</option>
+            <option value="Semua Kelas SD">🌈 Umum (Semua Kelas SD)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Pill Buttons Filter Tipe Media -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t-2 border-sky-100">
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="setFilterTipe('Semua')" id="filterBtn_Semua" class="type-pill-btn btn-bouncy px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer">
+            🌈 Semua Media
+          </button>
+          <button onclick="setFilterTipe('mpi_html')" id="filterBtn_mpi_html" class="type-pill-btn btn-bouncy px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer">
+            🎮 Game / MPI
+          </button>
+          <button onclick="setFilterTipe('embed')" id="filterBtn_embed" class="type-pill-btn btn-bouncy px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer">
+            🔗 Simulasi Web
+          </button>
+          <button onclick="setFilterTipe('youtube')" id="filterBtn_youtube" class="type-pill-btn btn-bouncy px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer">
+            ▶ Video YouTube
+          </button>
+          <button onclick="setFilterTipe('audio')" id="filterBtn_audio" class="type-pill-btn btn-bouncy px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer">
+            🎵 Lagu & Audio
+          </button>
+        </div>
+
+        <span id="showingCountInfo" class="text-xs sm:text-sm text-sky-700 font-extrabold bg-sky-100 px-3.5 py-1.5 rounded-full">Menampilkan 0 media</span>
+      </div>
+    </section>
+
+    <!-- GALLERY GRID -->
+    <section>
+      <div id="mediaGalleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"></div>
+
+      <!-- Empty State -->
+      <div id="emptyGalleryState" class="hidden sunny-panel rounded-3xl p-12 text-center max-w-lg mx-auto my-6">
+        <div class="w-20 h-20 rounded-3xl bg-amber-100 text-amber-500 flex items-center justify-center mx-auto mb-4 text-4xl">
+          🕵️‍♂️
+        </div>
+        <h3 class="text-xl font-display font-bold text-slate-800">Yah, Media Belum Ditemukan!</h3>
+        <p class="text-xs sm:text-sm text-slate-600 font-medium mt-1 mb-5">Coba ganti kata pencarian atau pilih Semua Kelas SD ya!</p>
+        <button onclick="resetAllFilters()" class="btn-bouncy px-6 py-3 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white text-xs sm:text-sm font-extrabold shadow-md cursor-pointer">
+          🔄 Tampilkan Semua Media
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER CERAH -->
+  <footer class="mt-14 border-t-4 border-sky-200 bg-white py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-600 font-semibold">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">🎒</span>
+        <span class="font-display font-bold text-sky-700">JAMPI SD</span>
+        <span>— JAringan Media Pembelajaran Interaktif Sekolah Dasar</span>
+      </div>
+      <div>
+        <span>Siap Semat di <strong class="text-emerald-600">Google Sites</strong> • Belajar Jadi Makin Seru!</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 1: ADMIN LOGIN MODAL                                -->
+  <!-- ========================================================= -->
+  <div id="loginModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 border-4 border-sky-300 shadow-2xl relative">
+      <button onclick="closeLoginModal()" class="absolute top-5 right-5 w-9 h-9 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-600 font-bold flex items-center justify-center cursor-pointer">
+        ✕
+      </button>
+
+      <div class="w-16 h-16 rounded-2xl bg-sky-100 border-2 border-sky-300 text-sky-600 flex items-center justify-center text-3xl mb-4">
+        👨‍🏫
+      </div>
+      <h3 class="text-2xl font-display font-bold text-slate-800">Login Guru / Admin SD</h3>
+      <p class="text-xs sm:text-sm text-slate-600 font-medium mt-1">Masuk untuk menambah permainan, video, atau lagu pembelajaran SD.</p>
+
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4 mt-6">
+        <div>
+          <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-1.5">Username</label>
+          <input type="text" id="loginUsername" required autocomplete="off" placeholder="Masukkan username Guru/Admin" class="w-full px-4 py-3 rounded-2xl bg-sky-50 border-2 border-sky-200 text-slate-800 text-sm font-bold focus:outline-none focus:border-sky-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-1.5">Password</label>
+          <input type="password" id="loginPassword" required autocomplete="off" placeholder="Masukkan password" class="w-full px-4 py-3 rounded-2xl bg-sky-50 border-2 border-sky-200 text-slate-800 text-sm font-bold focus:outline-none focus:border-sky-500" />
+        </div>
+        <p id="loginErrorMsg" class="text-xs font-extrabold text-rose-600 hidden">⚠️ Username atau password belum tepat!</p>
+
+        <div class="pt-2 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeLoginModal()" class="px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer">Batal</button>
+          <button type="submit" class="btn-bouncy px-6 py-3 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white text-xs sm:text-sm font-extrabold shadow-md cursor-pointer">
+            🔓 Masuk Panel Guru
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 2: CONFIRM DELETE MODAL (NO BROWSER CONFIRM)        -->
+  <!-- ========================================================= -->
+  <div id="deleteConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 border-4 border-rose-300 shadow-2xl text-center">
+      <div class="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto mb-4">
+        🗑️
+      </div>
+      <h3 class="text-xl font-display font-bold text-slate-800">Hapus Media Ini?</h3>
+      <p id="deleteModalItemTitle" class="text-sm font-bold text-slate-700 mt-2"></p>
+      <p class="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 mt-3 font-semibold">
+        Media akan langsung dihapus secara permanen dari Cloud di semua perangkat siswa.
+      </p>
+      <div class="flex items-center justify-center gap-3 mt-6">
+        <button onclick="closeDeleteModal()" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-extrabold cursor-pointer">Batal</button>
+        <button id="btnConfirmDeleteAction" class="btn-bouncy px-5 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-extrabold shadow-md cursor-pointer">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 3: INTERACTIVE FULLSCREEN MEDIA PLAYER CERIA        -->
+  <!-- ========================================================= -->
+  <div id="playerModal" class="fixed inset-0 z-50 hidden flex-col bg-sky-950/95 backdrop-blur-md">
+    <!-- Top Control Bar Cerah -->
+    <div class="h-16 px-4 sm:px-6 border-b-4 border-sky-300 flex items-center justify-between gap-3 bg-white shrink-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <span id="playerBadgeType" class="px-3 py-1 rounded-xl text-xs font-extrabold shrink-0"></span>
+        <div class="truncate">
+          <h3 id="playerTitle" class="text-sm sm:text-base font-display font-bold text-slate-800 truncate">Judul Media</h3>
+          <p id="playerMeta" class="text-[11px] font-semibold text-slate-500 truncate"></p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="toggleModalFullscreen()" class="btn-bouncy inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-100 hover:bg-sky-500 text-sky-800 hover:text-white text-xs font-extrabold border-2 border-sky-300 transition-all cursor-pointer" title="Layar Penuh">
+          <span>⛶</span>
+          <span class="hidden md:inline">Layar Penuh (Fullscreen)</span>
+        </button>
+        <button onclick="openCurrentMediaInNewTab()" class="btn-bouncy inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-500 text-emerald-800 hover:text-white text-xs font-extrabold border-2 border-emerald-300 transition-all cursor-pointer" title="Buka di Tab Baru">
+          <span>↗</span>
+          <span class="hidden sm:inline">Buka di Tab Baru</span>
+        </button>
+        <button onclick="closePlayerModal()" class="btn-bouncy inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-extrabold shadow-sm transition-all cursor-pointer">
+          <span>✕ Tutup</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Player Viewport -->
+    <div id="playerStageContainer" class="flex-1 w-full h-full relative overflow-hidden flex items-center justify-center bg-sky-50">
+      <!-- Dynamic Content Injected Here -->
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- APPLICATION SCRIPT & SELF-BUNDLING DATA                   -->
+  <!-- ========================================================= -->
+  <script>
+/*__JAMPI_CLOUD_URL_START__*/
+let DEFAULT_CLOUD_DB_URL = "";
+/*__JAMPI_CLOUD_URL_END__*/
+
+/*__JAMPI_DATA_START__*/
+let INITIAL_MEDIA = [
+  {
+    "id": "jampi-sd-1",
+    "judul": "Kuis Cepat Tangkas: Petualangan Tata Surya Kita",
+    "pembuat": "Kak Budi & Tim JAMPI SD",
+    "kategori": "IPAS & Sains",
+    "jenjang": "Kelas 5 - 6 SD",
+    "tipe": "mpi_html",
+    "deskripsi": "Ayo bantu Kapten Bintang menjawab teka-teki tentang planet-planet di Tata Surya dan kumpulkan bintang sebanyak-banyaknya!",
+    "konten": "<!DOCTYPE html><html lang='id'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Kuis Tata Surya SD</title><style>*{box-sizing:border-box;font-family:'Comic Sans MS','Segoe UI',sans-serif}body{margin:0;min-height:100vh;background:linear-gradient(135deg,#e0f2fe,#fef3c7);color:#1e293b;display:flex;align-items:center;justify-content:center;padding:16px}.card{background:#ffffff;border:4px solid #38bdf8;border-radius:28px;max-width:540px;width:100%;padding:28px;text-align:center;box-shadow:0 12px 0 #7dd3fc,0 20px 40px rgba(14,165,233,0.2)}.badge{display:inline-block;background:#fef08a;color:#854d0e;border:2px solid #facc15;padding:6px 16px;border-radius:99px;font-size:13px;font-weight:800;margin-bottom:12px}h2{margin:8px 0 18px;font-size:22px;line-height:1.4;color:#0f172a}.opts{display:grid;gap:12px;margin-top:16px}button.opt{background:#f0f9ff;color:#0369a1;border:3px solid #bae6fd;padding:14px;border-radius:18px;font-size:16px;font-weight:800;cursor:pointer;transition:0.2s}button.opt:hover{background:#38bdf8;color:#fff;border-color:#0284c7;transform:scale(1.02)}.hud{display:flex;justify-content:space-between;font-weight:800;font-size:15px;color:#0284c7;margin-bottom:14px;background:#e0f2fe;padding:10px 16px;border-radius:16px}.feedback{margin-top:16px;font-weight:800;font-size:16px;min-height:26px}.btn-restart{background:#10b981;color:#fff;border:0;padding:14px 28px;border-radius:16px;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px;box-shadow:0 6px 0 #059669}</style></head><body><div class='card'><div class='hud'><span id='qNum'>Soal 1/4</span><span id='scoreInfo'>Bintang: 0 ⭐</span></div><span class='badge'>🚀 Misi Sains SD</span><h2 id='qText'>Memuat...</h2><div id='optsBox' class='opts'></div><div id='fb' class='feedback'></div></div><script>const qs=[{q:'Planet manakah yang dijuluki sebagai Planet Merah?',a:['Planet Mars','Planet Venus','Planet Jupiter','Planet Merkurius'],c:0},{q:'Planet paling besar di dalam Tata Surya kita adalah...',a:['Bumi','Saturnus','Jupiter','Neptunus'],c:2},{q:'Planet cantik yang memiliki cincin besar dari es dan debu adalah...',a:['Uranus','Saturnus','Mars','Venus'],c:1},{q:'Bintang besar yang menjadi pusat Tata Surya dan menyinari Bumi adalah...',a:['Bulan','Matahari','Komet','Asteroid'],c:1}];let idx=0,score=0;function loadQ(){const fb=document.getElementById('fb');fb.textContent='';if(idx>=qs.length){document.getElementById('qNum').textContent='Selesai!';document.getElementById('qText').textContent='🎉 Hebat Sekali! Kamu meraih '+score+' dari '+(qs.length*25)+' Bintang!';document.getElementById('optsBox').innerHTML='<button class=\"btn-restart\" onclick=\"idx=0;score=0;loadQ()\">🔄 Main Lagi Yuk!</button>';return;}document.getElementById('qNum').textContent='Soal '+(idx+1)+' dari '+qs.length;document.getElementById('scoreInfo').textContent='Bintang: '+score+' ⭐';document.getElementById('qText').textContent=qs[idx].q;const box=document.getElementById('optsBox');box.innerHTML='';qs[idx].a.forEach((t,i)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>ans(i);box.appendChild(b);});}function ans(i){const fb=document.getElementById('fb');if(i===qs[idx].c){score+=25;fb.style.color='#059669';fb.textContent='🌟 Hore Benar! +25 Bintang!';}else{fb.style.color='#e11d48';fb.textContent='💡 Hampir tepat! Jawabannya: '+qs[idx].a[qs[idx].c];}idx++;setTimeout(loadQ,1200);}loadQ();<\/script></body></html>",
+    "createdAt": "2025-02-20"
+  },
+  {
+    "id": "jampi-sd-2",
+    "judul": "Simulasi Interaktif: Belajar Pecahan & Kue Matematika",
+    "pembuat": "PhET Interactive Simulations",
+    "kategori": "Matematika",
+    "jenjang": "Kelas 3 - 4 SD",
+    "tipe": "embed",
+    "deskripsi": "Ayo belajar membuat pecahan dengan memotong kue dan mencocokkan bentuk pecahan secara visual dan menyenangkan!",
+    "konten": "https://phet.colorado.edu/sims/html/fractions-intro/latest/fractions-intro_en.html",
+    "createdAt": "2025-02-20"
+  },
+  {
+    "id": "jampi-sd-3",
+    "judul": "Video Animasi Sains SD: Mengapa Air Hujan Tidak Pernah Habis?",
+    "pembuat": "Kok Bisa? Kids",
+    "kategori": "IPAS & Sains",
+    "jenjang": "Semua Kelas SD",
+    "tipe": "youtube",
+    "deskripsi": "Tonton perjalanan seru tetesan air dari laut menuju awan hingga turun menjadi hujan yang menyegarkan tanaman di sekitar kita!",
+    "konten": "https://www.youtube.com/watch?v=al-do-HGuIk",
+    "youtubeId": "al-do-HGuIk",
+    "createdAt": "2025-02-20"
+  },
+  {
+    "id": "jampi-sd-4",
+    "judul": "Musik & Nada Ceria: Mengenal Tangga Nada Do-Re-Mi",
+    "pembuat": "Sanggar Musik Anak Nusantara",
+    "kategori": "Seni & Olahraga",
+    "jenjang": "Kelas 1 - 2 SD",
+    "tipe": "audio",
+    "deskripsi": "Dengarkan alunan tangga nada Do-Re-Mi-Fa-Sol-La-Si-Do untuk melatih pendengaran dan bernyanyi bersama teman-teman di kelas!",
+    "konten": "GENERATED_SYNTH_AUDIO",
+    "createdAt": "2025-02-20"
+  }
+];
+/*__JAMPI_DATA_END__*/
+
+    // =========================================================
+    // STATE MANAGEMENT
+    // =========================================================
+    let mediaList = Array.isArray(INITIAL_MEDIA) ? [...INITIAL_MEDIA] : [];
+    let isAdminLoggedIn = false;
+    let activeFilterTipe = 'Semua';
+    let currentPlayingMedia = null;
+    let currentBlobUrl = null;
+    let pendingDeleteId = null;
+
+    // Generate a pleasant educational WAV audio data URI on the fly if sample 4 uses GENERATED_SYNTH_AUDIO
+    function createMelodyWavDataUrl() {
+      const sampleRate = 22050;
+      const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]; // C4 to C5
+      const noteDuration = 0.35;
+      const totalSamples = Math.floor(sampleRate * noteDuration * notes.length);
+      const buffer = new ArrayBuffer(44 + totalSamples * 2);
+      const view = new DataView(buffer);
+
+      function writeString(offset, str) {
+        for (let i = 0; i < str.length; i++) {
+          view.setUint8(offset + i, str.charCodeAt(i));
+        }
+      }
+
+      writeString(0, 'RIFF');
+      view.setUint32(4, 36 + totalSamples * 2, true);
+      writeString(8, 'WAVE');
+      writeString(12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeString(36, 'data');
+      view.setUint32(40, totalSamples * 2, true);
+
+      let offset = 44;
+      const samplesPerNote = Math.floor(sampleRate * noteDuration);
+      for (let n = 0; n < notes.length; n++) {
+        const freq = notes[n];
+        for (let i = 0; i < samplesPerNote; i++) {
+          const t = i / sampleRate;
+          const envelope = Math.sin((Math.PI * i) / samplesPerNote);
+          const sample = Math.sin(2 * Math.PI * freq * t) * 0.45 * envelope;
+          view.setInt16(offset, sample * 32767, true);
+          offset += 2;
+        }
+      }
+
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return 'data:audio/wav;base64,' + btoa(binary);
+    }
+
+    // =========================================================
+    // TOAST NOTIFICATION SYSTEM (CERAH & RAMAH)
+    // =========================================================
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const colorMap = {
+        success: 'bg-emerald-50 border-emerald-400 text-emerald-900',
+        info: 'bg-sky-50 border-sky-400 text-sky-900',
+        warning: 'bg-amber-50 border-amber-400 text-amber-900',
+        error: 'bg-rose-50 border-rose-400 text-rose-900'
+      };
+      const iconMap = {
+        success: 'fa-circle-check text-emerald-500',
+        info: 'fa-circle-info text-sky-500',
+        warning: 'fa-triangle-exclamation text-amber-500',
+        error: 'fa-circle-xmark text-rose-500'
+      };
+
+      toast.className = `pointer-events-auto flex items-start gap-3 p-4 rounded-2xl border-3 shadow-xl transition-all duration-300 ${colorMap[type] || colorMap.info}`;
+      toast.innerHTML = `
+        <i class="fa-solid ${iconMap[type] || iconMap.info} text-xl mt-0.5 shrink-0"></i>
+        <div class="text-xs sm:text-sm font-bold leading-relaxed flex-1">${message}</div>
+        <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-700 text-xs font-extrabold px-1">✕</button>
+      `;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        if (toast && toast.parentElement) {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(-8px)';
+          setTimeout(() => toast.remove(), 250);
+        }
+      }, 5500);
+    }
+
+    // =========================================================
+    // YOUTUBE ID EXTRACTOR
+    // =========================================================
+    function extractYoutubeId(url) {
+      if (!url) return null;
+      const trimmed = url.trim();
+      const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+      const match = trimmed.match(regex);
+      if (match && match[1]) return match[1];
+      if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+      return null;
+    }
+
+    function previewYoutubeInput(val) {
+      const box = document.getElementById('youtubePreviewBox');
+      const thumb = document.getElementById('youtubePreviewThumb');
+      const idText = document.getElementById('youtubeDetectedId');
+      const ytId = extractYoutubeId(val);
+      if (ytId) {
+        thumb.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+        idText.textContent = `Video ID: ${ytId}`;
+        box.classList.remove('hidden');
+        box.classList.add('flex');
+      } else {
+        box.classList.add('hidden');
+        box.classList.remove('flex');
+      }
+    }
+
+    // =========================================================
+    // ADMIN AUTHENTICATION & UI STATE
+    // =========================================================
+    function openLoginModal() {
+      document.getElementById('loginUsername').value = '';
+      document.getElementById('loginPassword').value = '';
+      document.getElementById('loginErrorMsg').classList.add('hidden');
+      const modal = document.getElementById('loginModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => document.getElementById('loginUsername').focus(), 100);
+    }
+
+    function closeLoginModal() {
+      const modal = document.getElementById('loginModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('loginUsername').value.trim();
+      const pass = document.getElementById('loginPassword').value;
+
+      if (user === 'admin' && pass === 'jampi123') {
+        isAdminLoggedIn = true;
+        closeLoginModal();
+        syncAdminUIState();
+        showToast('Selamat datang Bapak/Ibu Guru! Mode kelola media SD telah aktif.', 'success');
+      } else {
+        document.getElementById('loginErrorMsg').classList.remove('hidden');
+      }
+    }
+
+    function logoutAdmin() {
+      isAdminLoggedIn = false;
+      resetAdminForm();
+      syncAdminUIState();
+      showToast('Bapak/Ibu Guru telah keluar dari Mode Admin.', 'info');
+    }
+
+    function syncAdminUIState() {
+      const btnLogin = document.getElementById('btnLoginAdmin');
+      const adminHeader = document.getElementById('adminHeaderControls');
+      const adminPanel = document.getElementById('adminPanelSection');
+
+      if (isAdminLoggedIn) {
+        btnLogin.classList.add('hidden');
+        adminHeader.classList.remove('hidden');
+        adminHeader.classList.add('flex');
+        adminPanel.classList.remove('hidden');
+      } else {
+        btnLogin.classList.remove('hidden');
+        adminHeader.classList.add('hidden');
+        adminHeader.classList.remove('flex');
+        adminPanel.classList.add('hidden');
+      }
+      renderGallery();
+    }
+
+    // =========================================================
+    // ADMIN MEDIA TABS & FILE READERS
+    // =========================================================
+    function switchMediaTypeTab(type) {
+      document.getElementById('activeMediaType').value = type;
+      const types = ['mpi_html', 'embed', 'youtube', 'audio'];
+
+      types.forEach(t => {
+        const btn = document.getElementById(`tabBtn_${t}`);
+        const panel = document.getElementById(`panel_${t}`);
+        if (t === type) {
+          btn.className = 'tab-type-btn flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl font-extrabold text-xs sm:text-sm border-2 transition-all cursor-pointer bg-sky-500 text-white border-sky-600 shadow-md shadow-sky-400/30';
+          panel.classList.remove('hidden');
+        } else {
+          btn.className = 'tab-type-btn flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl font-bold text-xs sm:text-sm border-2 transition-all cursor-pointer bg-sky-50 text-slate-700 border-sky-200 hover:bg-sky-100';
+          panel.classList.add('hidden');
+        }
+      });
+    }
+
+    function setupDragAndDrop() {
+      const dropZone = document.getElementById('htmlDropZone');
+      if (!dropZone) return;
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        dropZone.addEventListener(evt, e => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('border-emerald-600', 'bg-emerald-50');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(evt => {
+        dropZone.addEventListener(evt, e => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('border-emerald-600', 'bg-emerald-50');
+        });
+      });
+
+      dropZone.addEventListener('drop', e => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          readHtmlFile(files[0]);
+        }
+      });
+    }
+
+    function handleHtmlFileSelect(e) {
+      const file = e.target.files[0];
+      if (file) readHtmlFile(file);
+    }
+
+    function readHtmlFile(file) {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('inputHtmlContent').value = evt.target.result;
+        const statusEl = document.getElementById('htmlFileStatus');
+        statusEl.textContent = `✅ File "${file.name}" (${(file.size / 1024).toFixed(1)} KB) berhasil dimuat!`;
+        statusEl.className = 'text-xs text-emerald-700 font-extrabold mt-1';
+      };
+      reader.readAsText(file);
+    }
+
+    function handleAudioFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('inputAudioUrl').value = evt.target.result;
+        const status = document.getElementById('audioFileStatus');
+        status.textContent = `✅ File audio "${file.name}" siap disimpan!`;
+        status.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // =========================================================
+    // CREATE / EDIT / DELETE MEDIA
+    // =========================================================
+    function handleSaveMedia(e) {
+      e.preventDefault();
+      const editId = document.getElementById('editMediaId').value;
+      const tipe = document.getElementById('activeMediaType').value;
+      const judul = document.getElementById('inputJudul').value.trim();
+      const pembuat = document.getElementById('inputPembuat').value.trim();
+      const kategori = document.getElementById('inputKategori').value;
+      const jenjang = document.getElementById('inputJenjang').value;
+      const deskripsi = document.getElementById('inputDeskripsi').value.trim();
+
+      let konten = '';
+      let youtubeId = '';
+
+      if (tipe === 'mpi_html') {
+        konten = document.getElementById('inputHtmlContent').value.trim();
+        if (!konten) {
+          showToast('Silakan pilih file .html atau tempelkan kode HTML terlebih dahulu!', 'warning');
+          return;
+        }
+      } else if (tipe === 'embed') {
+        konten = document.getElementById('inputEmbedContent').value.trim();
+        if (!konten) {
+          showToast('Silakan masukkan kode <iframe> atau URL media web!', 'warning');
+          return;
+        }
+      } else if (tipe === 'youtube') {
+        konten = document.getElementById('inputYoutubeUrl').value.trim();
+        youtubeId = extractYoutubeId(konten);
+        if (!youtubeId) {
+          showToast('Link YouTube tidak valid! Pastikan format link benar.', 'warning');
+          return;
+        }
+      } else if (tipe === 'audio') {
+        konten = document.getElementById('inputAudioUrl').value.trim();
+        if (!konten) {
+          showToast('Silakan unggah file audio atau masukkan link audio MP3!', 'warning');
+          return;
+        }
+      }
+
+      const mediaPayload = {
+        id: editId || 'jampi-sd-' + Date.now(),
+        judul,
+        pembuat,
+        kategori,
+        jenjang,
+        tipe,
+        deskripsi,
+        konten,
+        ...(youtubeId ? { youtubeId } : {}),
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+
+      if (editId) {
+        const index = mediaList.findIndex(m => m.id === editId);
+        if (index !== -1) {
+          mediaList[index] = mediaPayload;
+          showToast(`Media "${judul}" berhasil diperbarui! Jangan lupa Salin Kode HTML Terupdate di atas.`, 'success');
+        }
+      } else {
+        mediaList.unshift(mediaPayload);
+        showToast(`Media "${judul}" berhasil ditambahkan! Klik "Salin Kode HTML Terupdate" agar permanen di Google Sites.`, 'success');
+      }
+
+      resetAdminForm();
+      updateStatistics();
+      renderGallery();
+    }
+
+    function editMediaItem(id) {
+      const item = mediaList.find(m => m.id === id);
+      if (!item) return;
+
+      document.getElementById('editMediaId').value = item.id;
+      document.getElementById('inputJudul').value = item.judul;
+      document.getElementById('inputPembuat').value = item.pembuat;
+      document.getElementById('inputKategori').value = item.kategori;
+      document.getElementById('inputJenjang').value = item.jenjang;
+      document.getElementById('inputDeskripsi').value = item.deskripsi;
+
+      switchMediaTypeTab(item.tipe);
+
+      if (item.tipe === 'mpi_html') {
+        document.getElementById('inputHtmlContent').value = item.konten;
+      } else if (item.tipe === 'embed') {
+        document.getElementById('inputEmbedContent').value = item.konten;
+      } else if (item.tipe === 'youtube') {
+        document.getElementById('inputYoutubeUrl').value = item.konten;
+        previewYoutubeInput(item.konten);
+      } else if (item.tipe === 'audio') {
+        document.getElementById('inputAudioUrl').value = item.konten;
+      }
+
+      document.getElementById('adminFormHeading').innerHTML = `
+        <span class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 inline-flex items-center justify-center text-base border border-amber-300">✏️</span>
+        <span>— Edit Media SD: ${escapeHtml(item.judul)}</span>
+      `;
+      document.getElementById('btnSubmitText').textContent = 'Simpan Perubahan Media';
+      document.getElementById('btnCancelEdit').classList.remove('hidden');
+
+      document.getElementById('adminPanelSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetAdminForm() {
+      document.getElementById('mediaForm').reset();
+      document.getElementById('editMediaId').value = '';
+      document.getElementById('inputHtmlContent').value = '';
+      document.getElementById('inputEmbedContent').value = '';
+      document.getElementById('inputYoutubeUrl').value = '';
+      document.getElementById('inputAudioUrl').value = '';
+      document.getElementById('htmlFileStatus').textContent = 'Belum ada file dipilih (Bisa juga tempel kode HTML langsung di bawah)';
+      document.getElementById('htmlFileStatus').className = 'text-xs font-medium text-slate-500 mt-1';
+      document.getElementById('audioFileStatus').classList.add('hidden');
+      document.getElementById('youtubePreviewBox').classList.add('hidden');
+      document.getElementById('youtubePreviewBox').classList.remove('flex');
+
+      document.getElementById('adminFormHeading').innerHTML = `
+        <span class="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 inline-flex items-center justify-center text-base border border-sky-300">
+          <i class="fa-solid fa-plus"></i>
+        </span>
+        <span>— Tambah Media Pembelajaran SD Baru</span>
+      `;
+      document.getElementById('btnSubmitText').textContent = 'Simpan & Tambahkan ke Galeri SD';
+      document.getElementById('btnCancelEdit').classList.add('hidden');
+      switchMediaTypeTab('mpi_html');
+    }
+
+    function promptDeleteMedia(id) {
+      const item = mediaList.find(m => m.id === id);
+      if (!item) return;
+      pendingDeleteId = id;
+      document.getElementById('deleteModalItemTitle').textContent = `"${item.judul}" (${item.jenjang})`;
+      const modal = document.getElementById('deleteConfirmModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      document.getElementById('btnConfirmDeleteAction').onclick = () => {
+        mediaList = mediaList.filter(m => m.id !== pendingDeleteId);
+        closeDeleteModal();
+        updateStatistics();
+        renderGallery();
+        showToast('Media telah dihapus. Klik "Salin Kode HTML Terupdate" untuk menyimpan perubahan ke Google Sites.', 'info');
+      };
+    }
+
+    function closeDeleteModal() {
+      pendingDeleteId = null;
+      const modal = document.getElementById('deleteConfirmModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // =========================================================
+    // SELF-BUNDLING STATE GENERATOR (COPY & DOWNLOAD HTML)
+    // =========================================================
+    function buildUpdatedFullHtmlSource() {
+      const wasAdmin = isAdminLoggedIn;
+      const btnLogin = document.getElementById('btnLoginAdmin');
+      const adminHeader = document.getElementById('adminHeaderControls');
+      const adminPanel = document.getElementById('adminPanelSection');
+      const toastContainer = document.getElementById('toastContainer');
+      const savedToastHtml = toastContainer.innerHTML;
+
+      btnLogin.classList.remove('hidden');
+      adminHeader.classList.add('hidden');
+      adminHeader.classList.remove('flex');
+      adminPanel.classList.add('hidden');
+      toastContainer.innerHTML = '';
+
+      let rawHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+      toastContainer.innerHTML = savedToastHtml;
+      if (wasAdmin) {
+        btnLogin.classList.add('hidden');
+        adminHeader.classList.remove('hidden');
+        adminHeader.classList.add('flex');
+        adminPanel.classList.remove('hidden');
+      }
+
+      const startMarker = '/*__JAMPI_DATA_START__*/';
+      const endMarker = '/*__JAMPI_DATA_END__*/';
+      const startIdx = rawHtml.indexOf(startMarker);
+      const endIdx = rawHtml.indexOf(endMarker);
+
+      if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+        const serializedData = JSON.stringify(mediaList, null, 2);
+        const replacementBlock = `${startMarker}\nlet INITIAL_MEDIA = ${serializedData};\n${endMarker}`;
+        rawHtml = rawHtml.substring(0, startIdx) + replacementBlock + rawHtml.substring(endIdx + endMarker.length);
+      }
+
+      return rawHtml;
+    }
+
+    async function copyUpdatedHtmlBundle() {
+      const updatedHtml = buildUpdatedFullHtmlSource();
+      let copied = false;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(updatedHtml);
+          copied = true;
+        } catch (err) {
+          copied = false;
+        }
+      }
+
+      if (!copied) {
+        const textarea = document.createElement('textarea');
+        textarea.value = updatedHtml;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          copied = true;
+        } catch (err) {
+          copied = false;
+        }
+        document.body.removeChild(textarea);
+      }
+
+      if (copied) {
+        showToast('Kode berhasil disalin! Tempelkan ke menu Sematkan Kode (Embed) di Google Sites lalu klik Publikasikan.', 'success');
+      } else {
+        showToast('Gagal menyalin otomatis. Silakan gunakan tombol Unduh File HTML Terupdate.', 'error');
+      }
+    }
+
+    function downloadUpdatedHtmlBundle() {
+      const updatedHtml = buildUpdatedFullHtmlSource();
+      const blob = new Blob([updatedHtml], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'jampi-google-sites.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      showToast('File "jampi-google-sites.html" berhasil diunduh! Siap dipasang di Google Sites.', 'success');
+    }
+
+    // =========================================================
+    // STATISTICS & GALLERY RENDERING (BRIGHT KIDS THEME)
+    // =========================================================
+    function updateStatistics() {
+      document.getElementById('statTotal').textContent = mediaList.length;
+      document.getElementById('statMpi').textContent = mediaList.filter(m => m.tipe === 'mpi_html').length;
+      document.getElementById('statEmbed').textContent = mediaList.filter(m => m.tipe === 'embed').length;
+      document.getElementById('statYoutube').textContent = mediaList.filter(m => m.tipe === 'youtube').length;
+      document.getElementById('statAudio').textContent = mediaList.filter(m => m.tipe === 'audio').length;
+    }
+
+    function setFilterTipe(tipe) {
+      activeFilterTipe = tipe;
+      const allTypes = ['Semua', 'mpi_html', 'embed', 'youtube', 'audio'];
+      allTypes.forEach(t => {
+        const btn = document.getElementById(`filterBtn_${t}`);
+        if (!btn) return;
+        if (t === tipe) {
+          btn.className = 'type-pill-btn btn-bouncy px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer bg-sky-500 text-white shadow-md shadow-sky-400/30 border-2 border-sky-600';
+        } else {
+          btn.className = 'type-pill-btn btn-bouncy px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer bg-white text-slate-600 hover:bg-sky-50 border-2 border-sky-200';
+        }
+      });
+      renderGallery();
+    }
+
+    function resetAllFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('filterKategori').value = 'Semua';
+      document.getElementById('filterJenjang').value = 'Semua';
+      setFilterTipe('Semua');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function getTypeBadgeConfig(tipe) {
+      switch (tipe) {
+        case 'mpi_html':
+          return {
+            label: '🎮 Game Interaktif',
+            badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+            bannerGradient: 'from-emerald-300 via-teal-200 to-sky-200',
+            icon: '🎮'
+          };
+        case 'embed':
+          return {
+            label: '🔗 Simulasi Web',
+            badgeClass: 'bg-sky-100 text-sky-800 border-sky-300',
+            bannerGradient: 'from-sky-300 via-cyan-200 to-indigo-200',
+            icon: '🔗'
+          };
+        case 'youtube':
+          return {
+            label: '▶ Video Seru',
+            badgeClass: 'bg-rose-100 text-rose-800 border-rose-300',
+            bannerGradient: 'from-rose-300 via-pink-200 to-amber-200',
+            icon: '▶'
+          };
+        case 'audio':
+          return {
+            label: '🎵 Lagu & Audio',
+            badgeClass: 'bg-amber-100 text-amber-900 border-amber-300',
+            bannerGradient: 'from-amber-300 via-yellow-200 to-orange-200',
+            icon: '🎵'
+          };
+        default:
+          return {
+            label: '📦 Media SD',
+            badgeClass: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+            bannerGradient: 'from-indigo-200 to-sky-200',
+            icon: '📦'
+          };
+      }
+    }
+
+    function renderGallery() {
+      const searchVal = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      const kategoriVal = document.getElementById('filterKategori').value;
+      const jenjangVal = document.getElementById('filterJenjang').value;
+
+      const filtered = mediaList.filter(item => {
+        const matchTipe = activeFilterTipe === 'Semua' || item.tipe === activeFilterTipe;
+        const matchKat = kategoriVal === 'Semua' || item.kategori === kategoriVal;
+        const matchJenjang = jenjangVal === 'Semua' || item.jenjang === jenjangVal || (jenjangVal !== 'Semua' && item.jenjang === 'Semua Kelas SD');
+        const matchSearch = !searchVal ||
+          (item.judul && item.judul.toLowerCase().includes(searchVal)) ||
+          (item.pembuat && item.pembuat.toLowerCase().includes(searchVal)) ||
+          (item.deskripsi && item.deskripsi.toLowerCase().includes(searchVal));
+        return matchTipe && matchKat && matchJenjang && matchSearch;
+      });
+
+      document.getElementById('showingCountInfo').textContent = `Menampilkan ${filtered.length} dari ${mediaList.length} media SD`;
+
+      const grid = document.getElementById('mediaGalleryGrid');
+      const emptyState = document.getElementById('emptyGalleryState');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.innerHTML = filtered.map(item => {
+        const cfg = getTypeBadgeConfig(item.tipe);
+        const ytId = item.tipe === 'youtube' ? (item.youtubeId || extractYoutubeId(item.konten)) : null;
+
+        let visualHeader = '';
+        if (item.tipe === 'youtube' && ytId) {
+          visualHeader = `
+            <div class="relative h-44 w-full overflow-hidden rounded-t-2xl bg-sky-100 border-b-2 border-slate-100">
+              <img src="https://img.youtube.com/vi/${escapeHtml(ytId)}/hqdefault.jpg" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x400/bae6fd/0369a1?text=Video+Edukasi+SD'" />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent"></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-14 h-14 rounded-full bg-rose-500 text-white border-4 border-white flex items-center justify-center text-xl shadow-lg group-hover:scale-110 transition-transform">
+                  ▶
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          visualHeader = `
+            <div class="relative h-44 w-full overflow-hidden rounded-t-2xl bg-gradient-to-br ${cfg.bannerGradient} flex flex-col items-center justify-center p-6 border-b-2 border-slate-100">
+              <div class="w-16 h-16 rounded-3xl bg-white/90 border-2 border-white flex items-center justify-center text-3xl shadow-md group-hover:scale-110 transition-transform duration-300">
+                ${cfg.icon}
+              </div>
+              <span class="mt-2.5 px-3 py-0.5 rounded-full bg-white/80 text-[11px] font-extrabold uppercase tracking-wider text-slate-700">${escapeHtml(item.kategori)}</span>
+            </div>
+          `;
+        }
+
+        const adminButtonsHtml = isAdminLoggedIn ? `
+          <div class="flex items-center gap-2 pt-3 mt-3 border-t-2 border-slate-100">
+            <button onclick="editMediaItem('${escapeHtml(item.id)}')" class="flex-1 py-2 px-3 rounded-xl bg-amber-100 hover:bg-amber-400 text-amber-900 text-xs font-extrabold border-2 border-amber-300 transition-all cursor-pointer">
+              ✏️ Edit
+            </button>
+            <button onclick="promptDeleteMedia('${escapeHtml(item.id)}')" class="flex-1 py-2 px-3 rounded-xl bg-rose-100 hover:bg-rose-500 text-rose-800 hover:text-white text-xs font-extrabold border-2 border-rose-300 transition-all cursor-pointer">
+              🗑️ Hapus
+            </button>
+          </div>
+        ` : '';
+
+        return `
+          <article class="kid-card rounded-3xl flex flex-col justify-between overflow-hidden group">
+            <div>
+              ${visualHeader}
+              <div class="p-5">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <span class="px-3 py-1 rounded-xl text-[11px] font-extrabold border-2 ${cfg.badgeClass}">
+                    ${cfg.label}
+                  </span>
+                  <span class="px-3 py-1 rounded-xl text-[11px] font-extrabold bg-amber-100 text-amber-900 border-2 border-amber-300">
+                    🎒 ${escapeHtml(item.jenjang)}
+                  </span>
+                </div>
+
+                <h3 class="font-display font-bold text-lg text-slate-800 group-hover:text-sky-600 transition-colors line-clamp-2 leading-snug">
+                  ${escapeHtml(item.judul)}
+                </h3>
+
+                <p class="text-xs font-bold text-slate-500 mt-2 flex items-center gap-1.5">
+                  <span class="text-base">👩‍🏫</span>
+                  <span class="truncate">${escapeHtml(item.pembuat)}</span>
+                </p>
+
+                <p class="text-xs sm:text-sm text-slate-600 font-medium mt-3 line-clamp-3 leading-relaxed">
+                  ${escapeHtml(item.deskripsi)}
+                </p>
+              </div>
+            </div>
+
+            <div class="p-5 pt-0">
+              <button onclick="launchMediaPlayer('${escapeHtml(item.id)}')" class="btn-bouncy w-full py-3.5 px-4 rounded-2xl font-display font-bold text-sm sm:text-base bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-600 hover:to-emerald-600 text-white shadow-md shadow-sky-400/25 flex items-center justify-center gap-2 transition-all cursor-pointer">
+                <span>🚀 Ayo Mainkan!</span>
+              </button>
+              ${adminButtonsHtml}
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // =========================================================
+    // INTERACTIVE MODAL MEDIA PLAYER
+    // =========================================================
+    function launchMediaPlayer(id) {
+      const item = mediaList.find(m => m.id === id);
+      if (!item) return;
+
+      currentPlayingMedia = item;
+      if (currentBlobUrl) {
+        URL.revokeObjectURL(currentBlobUrl);
+        currentBlobUrl = null;
+      }
+
+      const cfg = getTypeBadgeConfig(item.tipe);
+      const badgeEl = document.getElementById('playerBadgeType');
+      badgeEl.className = `px-3 py-1 rounded-xl text-xs font-extrabold border-2 shrink-0 ${cfg.badgeClass}`;
+      badgeEl.textContent = cfg.label;
+
+      document.getElementById('playerTitle').textContent = item.judul;
+      document.getElementById('playerMeta').textContent = `${item.pembuat} • ${item.kategori} • ${item.jenjang}`;
+
+      const stage = document.getElementById('playerStageContainer');
+      stage.innerHTML = '';
+
+      if (item.tipe === 'mpi_html') {
+        const blob = new Blob([item.konten], { type: 'text/html' });
+        currentBlobUrl = URL.createObjectURL(blob);
+
+        const iframe = document.createElement('iframe');
+        iframe.className = 'w-full h-full border-0 bg-white';
+        iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-modals');
+        iframe.setAttribute('allowfullscreen', 'true');
+        iframe.srcdoc = item.konten;
+        stage.appendChild(iframe);
+
+      } else if (item.tipe === 'embed') {
+        const raw = item.konten.trim();
+        if (raw.toLowerCase().startsWith('<iframe')) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'w-full h-full flex items-center justify-center bg-white';
+          wrapper.innerHTML = raw;
+          const innerIframe = wrapper.querySelector('iframe');
+          if (innerIframe) {
+            innerIframe.className = 'w-full h-full border-0';
+            innerIframe.setAttribute('allowfullscreen', 'true');
+          }
+          stage.appendChild(wrapper);
+        } else {
+          const iframe = document.createElement('iframe');
+          iframe.className = 'w-full h-full border-0 bg-white';
+          iframe.src = raw;
+          iframe.setAttribute('allowfullscreen', 'true');
+          stage.appendChild(iframe);
+        }
+
+      } else if (item.tipe === 'youtube') {
+        const ytId = item.youtubeId || extractYoutubeId(item.konten);
+        const iframe = document.createElement('iframe');
+        iframe.className = 'w-full h-full border-0 bg-black';
+        iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0`;
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+        iframe.setAttribute('allowfullscreen', 'true');
+        stage.appendChild(iframe);
+
+      } else if (item.tipe === 'audio') {
+        const audioSrc = item.konten === 'GENERATED_SYNTH_AUDIO' ? createMelodyWavDataUrl() : item.konten;
+        stage.innerHTML = `
+          <div class="max-w-lg w-full mx-4 bg-white rounded-3xl p-8 text-center border-4 border-amber-300 shadow-2xl">
+            <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-300 to-orange-400 flex items-center justify-center text-5xl mx-auto mb-5 shadow-lg animate-float">
+              🎵
+            </div>
+            <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-extrabold">${escapeHtml(item.jenjang)}</span>
+            <h4 class="text-2xl font-display font-bold text-slate-800 mt-2">${escapeHtml(item.judul)}</h4>
+            <p class="text-xs sm:text-sm font-bold text-slate-500 mt-1 mb-6">${escapeHtml(item.pembuat)} • ${escapeHtml(item.kategori)}</p>
+
+            <!-- Equalizer Visual Cerah -->
+            <div class="flex items-end justify-center gap-2 h-12 mb-6">
+              <span class="w-2.5 bg-amber-400 rounded-full eq-bar" style="animation-delay:0s"></span>
+              <span class="w-2.5 bg-emerald-400 rounded-full eq-bar" style="animation-delay:0.2s"></span>
+              <span class="w-2.5 bg-sky-400 rounded-full eq-bar" style="animation-delay:0.4s"></span>
+              <span class="w-2.5 bg-rose-400 rounded-full eq-bar" style="animation-delay:0.1s"></span>
+              <span class="w-2.5 bg-amber-400 rounded-full eq-bar" style="animation-delay:0.3s"></span>
+              <span class="w-2.5 bg-emerald-400 rounded-full eq-bar" style="animation-delay:0.5s"></span>
+              <span class="w-2.5 bg-sky-400 rounded-full eq-bar" style="animation-delay:0.15s"></span>
+            </div>
+
+            <audio controls autoplay class="w-full rounded-2xl">
+              <source src="${escapeHtml(audioSrc)}" />
+              Browser kamu belum mendukung pemutar suara.
+            </audio>
+            <p class="text-xs sm:text-sm font-semibold text-slate-600 mt-5 leading-relaxed bg-amber-50 p-3.5 rounded-2xl border border-amber-200">${escapeHtml(item.deskripsi)}</p>
+          </div>
+        `;
+      }
+
+      const modal = document.getElementById('playerModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closePlayerModal() {
+      const stage = document.getElementById('playerStageContainer');
+      stage.innerHTML = '';
+      if (currentBlobUrl) {
+        URL.revokeObjectURL(currentBlobUrl);
+        currentBlobUrl = null;
+      }
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+      const modal = document.getElementById('playerModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      currentPlayingMedia = null;
+    }
+
+    function toggleModalFullscreen() {
+      const modal = document.getElementById('playerModal');
+      if (!document.fullscreenElement) {
+        if (modal.requestFullscreen) {
+          modal.requestFullscreen().catch(() => {
+            showToast('Layar penuh dibatasi oleh Google Sites. Klik tombol "↗ Buka di Tab Baru" agar tampil satu layar penuh!', 'info');
+          });
+        }
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function openCurrentMediaInNewTab() {
+      if (!currentPlayingMedia) return;
+      const item = currentPlayingMedia;
+
+      if (item.tipe === 'mpi_html') {
+        const blob = new Blob([item.konten], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      } else if (item.tipe === 'embed') {
+        const raw = item.konten.trim();
+        if (raw.toLowerCase().startsWith('<iframe')) {
+          const srcMatch = raw.match(/src=["']([^"']+)["']/i);
+          if (srcMatch && srcMatch[1]) {
+            window.open(srcMatch[1], '_blank');
+          } else {
+            const blob = new Blob([`<!DOCTYPE html><html><body style="margin:0;height:100vh">${raw}</body></html>`], { type: 'text/html' });
+            window.open(URL.createObjectURL(blob), '_blank');
+          }
+        } else {
+          window.open(raw, '_blank');
+        }
+      } else if (item.tipe === 'youtube') {
+        const ytId = item.youtubeId || extractYoutubeId(item.konten);
+        window.open(`https://www.youtube.com/watch?v=${ytId}`, '_blank');
+      } else if (item.tipe === 'audio') {
+        const audioSrc = item.konten === 'GENERATED_SYNTH_AUDIO' ? createMelodyWavDataUrl() : item.konten;
+        const htmlAudioPage = `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(item.judul)}</title></head><body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f0f9ff;color:#1e293b;font-family:sans-serif;text-align:center;padding:20px"><div style="background:#fff;padding:32px;border-radius:28px;border:4px solid #fbbf24;box-shadow:0 12px 24px rgba(0,0,0,0.08)"><h2>🎵 ${escapeHtml(item.judul)}</h2><p>${escapeHtml(item.pembuat)}</p><audio controls autoplay src="${escapeHtml(audioSrc)}" style="margin-top:20px;width:300px"></audio></div></body></html>`;
+        const blob = new Blob([htmlAudioPage], { type: 'text/html' });
+        window.open(URL.createObjectURL(blob), '_blank');
+      }
+    }
+
+    // =========================================================
+    // INITIALIZE APPLICATION ON LOAD
+    // =========================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      setupDragAndDrop();
+      switchMediaTypeTab('mpi_html');
+      setFilterTipe('Semua');
+      updateStatistics();
+      renderGallery();
+    });
+    // =========================================================
+    // REAL-TIME GOOGLE SPREADSHEET & APPS SCRIPT SYNC          
+    // =========================================================
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jampi-sd-default-app';
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let isCloudReady = false;
+    let customRestPollTimer = null;
+
+    // KODE GOOGLE APPS SCRIPT (CODE.GS) SIAP SALIN DENGAN AUTO-CHUNKING >50.000 KARAKTER SEL SPREADSHEET
+    const GOOGLE_APPS_SCRIPT_CODE = `// =========================================================================
+// KODE BACKEND JAMPI SD UNTUK GOOGLE SPREADSHEET & APPS SCRIPT (Code.gs)
+// =========================================================================
+const SHEET_NAME = 'Database_JAMPI_SD';
+
+function getOrCreateSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME);
+    sheet.appendRow([
+      'ID', 'Judul', 'Pembuat', 'Kategori', 'Jenjang', 'Tipe',
+      'Deskripsi', 'YouTube_ID', 'CreatedAt', 'UpdatedAt',
+      'Konten_Bagian_1', 'Konten_Bagian_2', 'Konten_Bagian_3', 'Konten_Bagian_4'
+    ]);
+    sheet.getRange(1, 1, 1, 14).setFontWeight('bold').setBackground('#e0f2fe');
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+// Memecah kode HTML/Audio panjang agar aman dari batas 50.000 karakter per sel Google Sheets
+function splitContentIntoChunks(str, size) {
+  const chunks = [];
+  const text = String(str || '');
+  for (let i = 0; i < text.length; i += size) {
+    chunks.push(text.substring(i, i + size));
+  }
+  return chunks;
+}
+
+function readAllMediaFromSheet(sheet) {
+  const rows = sheet.getDataRange().getValues();
+  if (rows.length <= 1) return [];
+  const list = [];
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r[0]) continue;
+    let gabungKonten = '';
+    for (let c = 10; c < r.length; c++) {
+      if (r[c]) gabungKonten += String(r[c]);
+    }
+    list.push({
+      id: String(r[0]),
+      judul: String(r[1] || ''),
+      pembuat: String(r[2] || ''),
+      kategori: String(r[3] || ''),
+      jenjang: String(r[4] || ''),
+      tipe: String(r[5] || 'mpi_html'),
+      deskripsi: String(r[6] || ''),
+      youtubeId: String(r[7] || ''),
+      createdAt: String(r[8] || ''),
+      updatedAt: String(r[9] || ''),
+      konten: gabungKonten
+    });
+  }
+  return list;
+}
+
+function doGet(e) {
+  const sheet = getOrCreateSheet();
+  const data = readAllMediaFromSheet(sheet);
+  return ContentService.createTextOutput(JSON.stringify({ status: 'ok', data: data }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = getOrCreateSheet();
+    const body = JSON.parse(e.postData.contents || '{}');
+    const action = body.action;
+
+    if (action === 'seed') {
+      const existing = readAllMediaFromSheet(sheet);
+      if (existing.length === 0 && Array.isArray(body.items)) {
+        body.items.forEach(item => upsertRow(sheet, item));
+      }
+    } else if (action === 'save' && body.item) {
+      upsertRow(sheet, body.item);
+    } else if (action === 'delete' && body.id) {
+      deleteRowById(sheet, body.id);
+    }
+
+    const latest = readAllMediaFromSheet(sheet);
+    return ContentService.createTextOutput(JSON.stringify({ status: 'ok', data: latest }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function upsertRow(sheet, item) {
+  const chunks = splitContentIntoChunks(item.konten || '', 45000);
+  const rowValues = [
+    item.id,
+    item.judul || '',
+    item.pembuat || '',
+    item.kategori || '',
+    item.jenjang || '',
+    item.tipe || 'mpi_html',
+    item.deskripsi || '',
+    item.youtubeId || '',
+    item.createdAt || '',
+    item.updatedAt || new Date().toISOString(),
+    ...chunks
+  ];
+
+  const data = sheet.getDataRange().getValues();
+  let foundRowIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === String(item.id)) {
+      foundRowIndex = i + 1;
+      break;
+    }
+  }
+
+  if (foundRowIndex !== -1) {
+    const maxCols = Math.max(sheet.getLastColumn(), rowValues.length);
+    sheet.getRange(foundRowIndex, 1, 1, maxCols).clearContent();
+    sheet.getRange(foundRowIndex, 1, 1, rowValues.length).setValues([rowValues]);
+  } else {
+    // Sisipkan di baris ke-2 (tepat di bawah header) agar media terbaru tampil paling atas
+    sheet.insertRowAfter(1);
+    sheet.getRange(2, 1, 1, rowValues.length).setValues([rowValues]);
+  }
+}
+
+function deleteRowById(sheet, id) {
+  const data = sheet.getDataRange().getValues();
+  for (let i = data.length - 1; i >= 1; i--) {
+    if (String(data[i][0]) === String(id)) {
+      sheet.deleteRow(i + 1);
+    }
+  }
+}`;
+
+    // Tampilkan kode Apps Script di dalam tag <pre> saat DOM siap
+    const preEl = document.getElementById('appsScriptSourcePre');
+    if (preEl) preEl.textContent = GOOGLE_APPS_SCRIPT_CODE;
+
+    window.copyAppsScriptCode = function() {
+      const textarea = document.createElement('textarea');
+      textarea.value = GOOGLE_APPS_SCRIPT_CODE;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showToast('✅ Kode Google Apps Script (Code.gs) berhasil disalin! Tempelkan ke menu Ekstensi -> Apps Script di Google Spreadsheet Anda.', 'success');
+    };
+
+    function cleanDbUrl(url) {
+      if (!url) return '';
+      let trimmed = url.trim();
+      if (!trimmed.includes('script.google.com')) {
+        trimmed = trimmed.replace(/\/+$/, '');
+        if (trimmed.endsWith('.json')) {
+          trimmed = trimmed.replace(/\/[^\/]+\.json$/, '');
+        }
+      }
+      return trimmed;
+    }
+
+    function getActiveCustomCloudUrl() {
+      return cleanDbUrl(DEFAULT_CLOUD_DB_URL);
+    }
+
+    function isGoogleAppsScriptUrl(url) {
+      return url.includes('script.google.com/macros/s/');
+    }
+
+    function isSingleBlobEndpoint(baseUrl) {
+      return baseUrl.includes('kvdb.io/') || baseUrl.includes('api.npoint.io/');
+    }
+
+    window.generateInstantCloudRoom = async function() {
+      const codeInput = document.getElementById('inputSchoolRoomCode');
+      let rawCode = (codeInput ? codeInput.value : '').trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
+      if (!rawCode || rawCode.length < 3) {
+        showToast('Ketikkan minimal 3 huruf/angka untuk Kode Unik Sekolah Anda (contoh: sdn1surabaya)!', 'warning');
+        if (codeInput) codeInput.focus();
+        return;
+      }
+
+      updateCloudBadge('syncing', 'Membuat Cloud Sekolah...');
+      const instantUrl = `https://kvdb.io/A2x9kLp7mQv4Wz8Yr3Tn6J/jampi_sd_${rawCode}`;
+      const urlInput = document.getElementById('inputCustomCloudUrl');
+      if (urlInput) urlInput.value = instantUrl;
+      DEFAULT_CLOUD_DB_URL = instantUrl;
+      await initCustomRestCloud(instantUrl, true);
+    };
+
+    window.toggleCloudSetupBox = function() {
+      const box = document.getElementById('cloudSetupBox');
+      if (!box) return;
+      box.classList.toggle('hidden');
+      const input = document.getElementById('inputCustomCloudUrl');
+      if (input && !input.value && DEFAULT_CLOUD_DB_URL) {
+        input.value = DEFAULT_CLOUD_DB_URL;
+      }
+    };
+
+    window.saveCustomCloudUrl = async function() {
+      const input = document.getElementById('inputCustomCloudUrl');
+      const urlVal = cleanDbUrl(input.value);
+      if (!urlVal || !urlVal.startsWith('https://')) {
+        showToast('Masukkan link URL Web App Google Apps Script (berakhiran /exec) yang diawali https://', 'warning');
+        return;
+      }
+      DEFAULT_CLOUD_DB_URL = urlVal;
+      await initCustomRestCloud(urlVal, true);
+    };
+
+    window.copyEmbedCodeWithCloud = async function() {
+      const currentUrl = getActiveCustomCloudUrl();
+      if (!currentUrl) {
+        const box = document.getElementById('cloudSetupBox');
+        if (box) box.classList.remove('hidden');
+        showToast('Silakan hubungkan URL Google Apps Script (/exec) terlebih dahulu sebelum menyalin kode untuk Google Sites!', 'warning');
+        return;
+      }
+
+      const wasAdmin = isAdminLoggedIn;
+      const btnLogin = document.getElementById('btnLoginAdmin');
+      const adminHeader = document.getElementById('adminHeaderControls');
+      const adminPanel = document.getElementById('adminPanelSection');
+      const toastContainer = document.getElementById('toastContainer');
+      const savedToast = toastContainer.innerHTML;
+
+      btnLogin.classList.remove('hidden');
+      adminHeader.classList.add('hidden');
+      adminHeader.classList.remove('flex');
+      adminPanel.classList.add('hidden');
+      toastContainer.innerHTML = '';
+
+      let rawHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+      toastContainer.innerHTML = savedToast;
+      if (wasAdmin) {
+        btnLogin.classList.add('hidden');
+        adminHeader.classList.remove('hidden');
+        adminHeader.classList.add('flex');
+        adminPanel.classList.remove('hidden');
+      }
+
+      const cStart = '/*__JAMPI_CLOUD_URL_START__*/';
+      const cEnd = '/*__JAMPI_CLOUD_URL_END__*/';
+      const idx1 = rawHtml.indexOf(cStart);
+      const idx2 = rawHtml.indexOf(cEnd);
+      if (idx1 !== -1 && idx2 !== -1 && idx2 > idx1) {
+        const block = `${cStart}\nlet DEFAULT_CLOUD_DB_URL = ${JSON.stringify(currentUrl)};\n${cEnd}`;
+        rawHtml = rawHtml.substring(0, idx1) + block + rawHtml.substring(idx2 + cEnd.length);
+      }
+
+      const textarea = document.createElement('textarea');
+      textarea.value = rawHtml;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+
+      showToast('✅ Kode HTML Terhubung Google Spreadsheet berhasil disalin! Tempelkan ke Google Sites 1 KALI SAJA.', 'success');
+    };
+
+    function updateCloudBadge(status, text) {
+      const dot = document.getElementById('cloudStatusDot');
+      const label = document.getElementById('cloudStatusText');
+      const badge = document.getElementById('cloudStatusBadge');
+      if (!dot || !label || !badge) return;
+
+      badge.classList.remove('hidden');
+      badge.classList.add('inline-flex');
+
+      if (status === 'online') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+        badge.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-extrabold bg-emerald-50 text-emerald-800 border-2 border-emerald-300';
+      } else if (status === 'syncing') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping';
+        badge.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-extrabold bg-amber-50 text-amber-800 border-2 border-amber-300';
+      } else {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+        badge.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-extrabold bg-rose-50 text-rose-800 border-2 border-rose-300';
+      }
+      label.textContent = text;
+    }
+
+    // Kirim perintah POST ke Google Apps Script menggunakan text/plain agar bebas blokir CORS Preflight
+    async function postToGoogleAppsScript(scriptUrl, payloadObj) {
+      const res = await fetch(scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payloadObj),
+        redirect: 'follow'
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const json = await res.json();
+      if (json.status === 'error') throw new Error(json.message || 'Apps Script Error');
+      return Array.isArray(json.data) ? json.data : [];
+    }
+
+    async function fetchFromCustomRestCloud(baseUrl) {
+      // 1. JIKA MENGGUNAKAN GOOGLE APPS SCRIPT (SPREADSHEET)
+      if (isGoogleAppsScriptUrl(baseUrl)) {
+        const sep = baseUrl.includes('?') ? '&' : '?';
+        const res = await fetch(`${baseUrl}${sep}t=${Date.now()}`, { redirect: 'follow' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        const items = Array.isArray(json.data) ? json.data : [];
+        if (items.length === 0 && Array.isArray(INITIAL_MEDIA) && INITIAL_MEDIA.length > 0) {
+          const seeded = await postToGoogleAppsScript(baseUrl, { action: 'seed', items: INITIAL_MEDIA });
+          return seeded.length > 0 ? seeded : [...INITIAL_MEDIA];
+        }
+        return items;
+      }
+
+      // 2. JIKA MENGGUNAKAN CLOUD INSTAN 1-KLIK (KVDB / NPOINT)
+      if (isSingleBlobEndpoint(baseUrl)) {
+        const res = await fetch(baseUrl, { cache: 'no-store' });
+        if (res.status === 404) {
+          await fetch(baseUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(INITIAL_MEDIA)
+          });
+          return [...INITIAL_MEDIA];
+        }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        if (!text || text.trim() === '' || text.trim() === '{}') {
+          await fetch(baseUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(INITIAL_MEDIA)
+          });
+          return [...INITIAL_MEDIA];
+        }
+        const parsed = JSON.parse(text);
+        return Array.isArray(parsed) ? parsed : Object.values(parsed).filter(Boolean);
+      }
+
+      // 3. JIKA MENGGUNAKAN FIREBASE REALTIME DATABASE REST API
+      const endpoint = `${baseUrl}/jampi_sd_media.json`;
+      const res = await fetch(endpoint, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+
+      if (!data) {
+        const seedObj = {};
+        INITIAL_MEDIA.forEach(item => { seedObj[item.id] = item; });
+        await fetch(endpoint, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(seedObj)
+        });
+        return [...INITIAL_MEDIA];
+      }
+
+      const items = Object.values(data).filter(Boolean);
+      items.sort((a, b) => {
+        const timeA = a.updatedAt || a.createdAt || '';
+        const timeB = b.updatedAt || b.createdAt || '';
+        return String(timeB).localeCompare(String(timeA));
+      });
+      return items;
+    }
+
+    async function saveListToSingleBlobEndpoint(baseUrl, updatedList) {
+      const res = await fetch(baseUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedList)
+      });
+      if (!res.ok) throw new Error('Gagal menyimpan ke Cloud (' + res.status + ')');
+    }
+
+    async function initCustomRestCloud(baseUrl, showSuccessToast = false) {
+      try {
+        const isGas = isGoogleAppsScriptUrl(baseUrl);
+        updateCloudBadge('syncing', isGas ? 'Menghubungkan Spreadsheet...' : 'Menghubungkan Cloud...');
+        const items = await fetchFromCustomRestCloud(baseUrl);
+        mediaList = items;
+        isCloudReady = true;
+        updateStatistics();
+        renderGallery();
+        updateCloudBadge('online', isGas ? '📊 Spreadsheet Terhubung' : '☁️ Cloud Terhubung');
+
+        const input = document.getElementById('inputCustomCloudUrl');
+        if (input) input.value = baseUrl;
+
+        if (showSuccessToast) {
+          showToast('🎉 Google Spreadsheet berhasil terhubung! Sekarang klik "📋 Salin Kode Embed Google Sites (1x Saja)".', 'success');
+        }
+
+        if (customRestPollTimer) clearInterval(customRestPollTimer);
+        customRestPollTimer = setInterval(async () => {
+          try {
+            const latest = await fetchFromCustomRestCloud(baseUrl);
+            if (JSON.stringify(latest) !== JSON.stringify(mediaList)) {
+              mediaList = latest;
+              updateStatistics();
+              renderGallery();
+            }
+          } catch (_) {}
+        }, 8000);
+      } catch (err) {
+        console.error('Custom Cloud / Spreadsheet Error:', err);
+        updateCloudBadge('offline', 'URL Spreadsheet Belum Tepat');
+        if (showSuccessToast) {
+          showToast('Gagal terhubung ke Google Apps Script. Pastikan saat Deploy sudah memilih "Siapa saja (Anyone)" dan URL berakhiran /exec.', 'error');
+        }
+      }
+    }
+
+    async function initCloudSync() {
+      const customUrl = getActiveCustomCloudUrl();
+      if (customUrl) {
+        await initCustomRestCloud(customUrl, false);
+        return;
+      }
+
+      try {
+        if (typeof __firebase_config === 'undefined' || !__firebase_config) {
+          updateCloudBadge('offline', '⚙️ Login Guru -> Setup Spreadsheet');
+          return;
+        }
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        updateCloudBadge('syncing', 'Menyambungkan Cloud...');
+
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+          currentUser = user;
+          if (!user) return;
+
+          const mediaColRef = collection(db, 'artifacts', appId, 'public', 'data', 'jampi_sd_media');
+
+          try {
+            const snapshot = await getDocs(mediaColRef);
+            if (snapshot.empty && Array.isArray(INITIAL_MEDIA) && INITIAL_MEDIA.length > 0) {
+              for (const item of INITIAL_MEDIA) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'jampi_sd_media', item.id);
+                await setDoc(docRef, item);
+              }
+            }
+          } catch (seedErr) {
+            console.warn('Seed check warning:', seedErr);
+          }
+
+          onSnapshot(
+            mediaColRef,
+            (snapshot) => {
+              const cloudItems = [];
+              snapshot.forEach((docSnap) => {
+                cloudItems.push(docSnap.data());
+              });
+
+              cloudItems.sort((a, b) => {
+                const timeA = a.updatedAt || a.createdAt || '';
+                const timeB = b.updatedAt || b.createdAt || '';
+                return String(timeB).localeCompare(String(timeA));
+              });
+
+              if (cloudItems.length > 0 || isCloudReady) {
+                mediaList = cloudItems;
+                updateStatistics();
+                renderGallery();
+              }
+              isCloudReady = true;
+              updateCloudBadge('online', '☁️ Cloud Terhubung');
+            },
+            (err) => {
+              console.error('Firestore listener error:', err);
+              updateCloudBadge('offline', 'Gangguan Koneksi Cloud');
+            }
+          );
+        });
+      } catch (err) {
+        console.error('Cloud init error:', err);
+        updateCloudBadge('offline', 'Mode Offline');
+      }
+    }
+
+    // Override Save Media handler to persist directly to Google Spreadsheet (Apps Script), Custom Cloud, or Firestore
+    window.handleSaveMedia = async function(e) {
+      e.preventDefault();
+      const editId = document.getElementById('editMediaId').value;
+      const tipe = document.getElementById('activeMediaType').value;
+      const judul = document.getElementById('inputJudul').value.trim();
+      const pembuat = document.getElementById('inputPembuat').value.trim();
+      const kategori = document.getElementById('inputKategori').value;
+      const jenjang = document.getElementById('inputJenjang').value;
+      const deskripsi = document.getElementById('inputDeskripsi').value.trim();
+
+      let konten = '';
+      let youtubeId = '';
+
+      if (tipe === 'mpi_html') {
+        konten = document.getElementById('inputHtmlContent').value.trim();
+        if (!konten) {
+          showToast('Silakan pilih file .html atau tempelkan kode HTML terlebih dahulu!', 'warning');
+          return;
+        }
+      } else if (tipe === 'embed') {
+        konten = document.getElementById('inputEmbedContent').value.trim();
+        if (!konten) {
+          showToast('Silakan masukkan kode <iframe> atau URL media web!', 'warning');
+          return;
+        }
+      } else if (tipe === 'youtube') {
+        konten = document.getElementById('inputYoutubeUrl').value.trim();
+        youtubeId = extractYoutubeId(konten);
+        if (!youtubeId) {
+          showToast('Link YouTube tidak valid! Pastikan format link benar.', 'warning');
+          return;
+        }
+      } else if (tipe === 'audio') {
+        konten = document.getElementById('inputAudioUrl').value.trim();
+        if (!konten) {
+          showToast('Silakan unggah file audio atau masukkan link audio MP3!', 'warning');
+          return;
+        }
+      }
+
+      if (konten.length > 950000) {
+        showToast('Ukuran file terlalu besar (>950 KB). Untuk file MP3 besar, gunakan Opsi 2 (Link URL Audio).', 'error');
+        return;
+      }
+
+      const nowIso = new Date().toISOString();
+      const mediaPayload = {
+        id: editId || 'jampi-sd-' + Date.now(),
+        judul,
+        pembuat,
+        kategori,
+        jenjang,
+        tipe,
+        deskripsi,
+        konten,
+        ...(youtubeId ? { youtubeId } : {}),
+        createdAt: nowIso.split('T')[0],
+        updatedAt: nowIso
+      };
+
+      const submitBtn = document.getElementById('btnSubmitMedia');
+      submitBtn.disabled = true;
+      const customUrl = getActiveCustomCloudUrl();
+
+      try {
+        if (customUrl && isGoogleAppsScriptUrl(customUrl)) {
+          updateCloudBadge('syncing', 'Menyimpan ke Spreadsheet...');
+          const updatedList = await postToGoogleAppsScript(customUrl, {
+            action: 'save',
+            item: mediaPayload
+          });
+          mediaList = updatedList;
+          updateStatistics();
+          renderGallery();
+          updateCloudBadge('online', '📊 Spreadsheet Terhubung');
+          showToast(`📊 Media "${judul}" berhasil disimpan ke Google Spreadsheet dan tampil di semua perangkat!`, 'success');
+        } else if (customUrl) {
+          updateCloudBadge('syncing', 'Menyimpan ke Cloud...');
+          if (isSingleBlobEndpoint(customUrl)) {
+            let latestList = [...mediaList];
+            if (editId) {
+              const idx = latestList.findIndex(m => m.id === editId);
+              if (idx !== -1) latestList[idx] = mediaPayload;
+              else latestList.unshift(mediaPayload);
+            } else {
+              latestList.unshift(mediaPayload);
+            }
+            await saveListToSingleBlobEndpoint(customUrl, latestList);
+            mediaList = latestList;
+          } else {
+            await fetch(`${customUrl}/jampi_sd_media/${mediaPayload.id}.json`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(mediaPayload)
+            });
+            mediaList = await fetchFromCustomRestCloud(customUrl);
+          }
+          updateStatistics();
+          renderGallery();
+          updateCloudBadge('online', '☁️ Cloud Terhubung');
+          showToast(`☁️ Media "${judul}" berhasil disimpan ke Cloud dan langsung tampil di semua perangkat!`, 'success');
+        } else if (db && currentUser) {
+          updateCloudBadge('syncing', 'Menyimpan ke Cloud...');
+          const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'jampi_sd_media', mediaPayload.id);
+          await setDoc(docRef, mediaPayload);
+          updateCloudBadge('online', '☁️ Cloud Terhubung');
+          showToast(`☁️ Media "${judul}" berhasil disimpan ke Cloud dan langsung tampil di semua perangkat!`, 'success');
+        } else {
+          if (editId) {
+            const index = mediaList.findIndex(m => m.id === editId);
+            if (index !== -1) mediaList[index] = mediaPayload;
+          } else {
+            mediaList.unshift(mediaPayload);
+          }
+          updateStatistics();
+          renderGallery();
+          showToast(`Media "${judul}" disimpan di perangkat ini. Hubungkan Google Spreadsheet di atas agar tampil di semua perangkat!`, 'warning');
+        }
+        resetAdminForm();
+      } catch (err) {
+        console.error('Error saving media:', err);
+        showToast('Gagal menyimpan ke Google Spreadsheet / Cloud. Periksa URL Web App Anda.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    };
+
+    // Override Delete Media handler to delete directly from Google Spreadsheet (Apps Script)
+    window.promptDeleteMedia = function(id) {
+      const item = mediaList.find(m => m.id === id);
+      if (!item) return;
+      pendingDeleteId = id;
+      document.getElementById('deleteModalItemTitle').textContent = `"${item.judul}" (${item.jenjang})`;
+      const modal = document.getElementById('deleteConfirmModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      document.getElementById('btnConfirmDeleteAction').onclick = async () => {
+        const targetId = pendingDeleteId;
+        closeDeleteModal();
+        const customUrl = getActiveCustomCloudUrl();
+        try {
+          if (customUrl && isGoogleAppsScriptUrl(customUrl)) {
+            updateCloudBadge('syncing', 'Menghapus dari Spreadsheet...');
+            const updatedList = await postToGoogleAppsScript(customUrl, {
+              action: 'delete',
+              id: targetId
+            });
+            mediaList = updatedList;
+            updateStatistics();
+            renderGallery();
+            updateCloudBadge('online', '📊 Spreadsheet Terhubung');
+            showToast('🗑️ Media berhasil dihapus dari baris Google Spreadsheet.', 'info');
+          } else if (customUrl) {
+            updateCloudBadge('syncing', 'Menghapus dari Cloud...');
+            if (isSingleBlobEndpoint(customUrl)) {
+              const updatedList = mediaList.filter(m => m.id !== targetId);
+              await saveListToSingleBlobEndpoint(customUrl, updatedList);
+              mediaList = updatedList;
+            } else {
+              await fetch(`${customUrl}/jampi_sd_media/${targetId}.json`, { method: 'DELETE' });
+              mediaList = await fetchFromCustomRestCloud(customUrl);
+            }
+            updateStatistics();
+            renderGallery();
+            updateCloudBadge('online', '☁️ Cloud Terhubung');
+            showToast('🗑️ Media berhasil dihapus dari Cloud di semua perangkat.', 'info');
+          } else if (db && currentUser) {
+            updateCloudBadge('syncing', 'Menghapus dari Cloud...');
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'jampi_sd_media', targetId);
+            await deleteDoc(docRef);
+            updateCloudBadge('online', '☁️ Cloud Terhubung');
+            showToast('🗑️ Media berhasil dihapus dari Cloud di semua perangkat.', 'info');
+          } else {
+            mediaList = mediaList.filter(m => m.id !== targetId);
+            updateStatistics();
+            renderGallery();
+            showToast('Media telah dihapus.', 'info');
+          }
+        } catch (err) {
+          console.error('Delete error:', err);
+          showToast('Gagal menghapus media dari Google Spreadsheet.', 'error');
+        }
+      };
+    };
+
+    initCloudSync();
+  </script>
+</body>
+</html>
